@@ -1,0 +1,6 @@
+logs/*.json
+logs/*.log
+.qwen/data/sessions/
+__pycache__/
+*.pyc
+.env
