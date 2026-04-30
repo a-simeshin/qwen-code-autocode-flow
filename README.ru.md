@@ -110,6 +110,21 @@ specs/                # Планы реализации
 logs/                 # Логи выполнения
 ```
 
+## Покрытие CLAUDE.md / QWEN.md
+
+Flow этого форка **полностью покрывает** четыре поведенческих правила из [andrej-karpathy-skills/CLAUDE.md](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md) (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution) — каждая секция обеспечена автоматическим механизмом, а не отдана на усмотрение LLM.
+
+Совместимо с любым проектом, где в корне лежит свой `QWEN.md` (или `CLAUDE.md`): агент `builder` читает его через `glob("**/QWEN.md")` / `glob("**/CLAUDE.md")` и накладывает поверх этих дефолтов.
+
+| Секция | Чем обеспечена | Степень |
+|--------|----------------|---------|
+| **§1 Think Before Coding** — допущения, неоднозначности, tradeoffs | `plan-w-team` Interview Round 1 + Round 2 (`AskUserQuestion`); plan-reviewer критерии #1 Problem Alignment, #3 Questions Gap | Сильно — формализованный гейт |
+| **§2 Simplicity First** — минимум кода, без спекулятивных абстракций | plan-reviewer критерий #5 Overengineering — явный FAIL | Сильно — гейт |
+| **§3 Surgical Changes** — трогать только нужное, без скоупкрипа | plan-reviewer критерий #9 Surgical Scope (до сборки); `check_diff_scope.py` (после сборки, сравнивает git diff с Relevant Files плана) | Сильно — гейт + пост-проверка |
+| **§3 Match existing style** | Stack-aware refs автозагружаются `context_router.py` (`refs/*-patterns.md`) + Context7 для актуальных API | Сильно |
+| **§4 Goal-Driven Execution** — верифицируемые критерии успеха | `validate_plan.py` требует `## Acceptance Criteria`; `validator_dispatcher.py` запускает ruff/ty/eslint/tsc/spotless на каждом `write_file`/`edit` | Сильно — автоэнфорс |
+| **Test Realism** — планы декларируют проверяемую тест-инфраструктуру; сборка проходит layer-check | plan-reviewer критерий #10 Test Realism; `check_test_layers.py` (после сборки, glob + infra signature regex + поиск сценариев + anti-mock эвристика) | Сильно — гейт + пост-проверка |
+
 ## MCP-интеграции (опционально)
 
 ### [Context7](https://github.com/upstash/context7)

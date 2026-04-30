@@ -148,17 +148,6 @@
           }
         ]
       }
-    ],
-    "Setup": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run --no-project $CLAUDE_PROJECT_DIR/.qwen/hooks/setup.py"
-          }
-        ]
-      }
     ]
   }
 }

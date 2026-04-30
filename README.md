@@ -108,6 +108,21 @@ specs/                # Implementation plans
 logs/                 # Execution logs
 ```
 
+## CLAUDE.md / QWEN.md Coverage
+
+This fork's flow **fully covers** the four behavioral guidelines from [andrej-karpathy-skills/CLAUDE.md](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md) (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution) — every section is enforced by an automated mechanism, not left to LLM discretion.
+
+Compatible with any project that drops its own `QWEN.md` (or `CLAUDE.md`) in the root: the `builder` agent reads it via `glob("**/QWEN.md")` / `glob("**/CLAUDE.md")` and merges it on top of these defaults.
+
+| Section | Enforced by | Strength |
+|---------|-------------|----------|
+| **§1 Think Before Coding** — assumptions, ambiguity, tradeoffs | `plan-w-team` Interview Round 1 + Round 2 (`AskUserQuestion`); plan-reviewer criteria #1 Problem Alignment, #3 Questions Gap | Strong — formalized gate |
+| **§2 Simplicity First** — minimum code, no speculative abstractions | plan-reviewer criterion #5 Overengineering — explicit FAIL | Strong — gate |
+| **§3 Surgical Changes** — touch only what's needed, no scope creep | plan-reviewer criterion #9 Surgical Scope (pre-build); `check_diff_scope.py` (post-build, compares git diff vs plan's Relevant Files) | Strong — gate + post-check |
+| **§3 Match existing style** | Stack-aware refs auto-loaded by `context_router.py` (`refs/*-patterns.md`) + Context7 for live API docs | Strong |
+| **§4 Goal-Driven Execution** — verifiable success criteria | `validate_plan.py` requires `## Acceptance Criteria`; `validator_dispatcher.py` runs ruff/ty/eslint/tsc/spotless on every `write_file`/`edit` | Strong — auto-enforced |
+| **Test Realism** — plans declare verifiable test infra; built code gets layer-checked | plan-reviewer criterion #10 Test Realism; `check_test_layers.py` (post-build, glob + infra signature regex + scenario fuzzy grep + anti-mock heuristic) | Strong — gate + post-check |
+
 ## MCP Integrations (Optional)
 
 ### [Context7](https://github.com/upstash/context7)
